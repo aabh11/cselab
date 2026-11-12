@@ -1,0 +1,40 @@
+
+%{
+#include<stdio.h>
+int pc=0, sc=0;
+%}
+%%
+"printf" { fprintf(yyout,"writef"); pc++;}
+"scanf" { fprintf(yyout,"readf"); sc++;}
+%%
+int yywrap()
+{
+return 1;
+}
+int main()
+{
+yyin=fopen("input.txt","r");
+yyout=fopen("output.txt","w");
+yylex();
+printf("No of printf statements = %d\n No of scanf statements=%d\n", pc, sc);
+}
+
+
+
+input.txt
+
+#include<stdio.h>
+void main()
+{
+    int a;
+    printf("Enter a number");
+    scanf("%d",&a);
+    printf("Number = %d",a);
+}
+
+
+
+
+output:flex replacestring.l
+ gcc lex.yy.c -o replace
+./replace
