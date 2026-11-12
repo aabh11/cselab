@@ -1,0 +1,29 @@
+
+%{
+#include<stdio.h>
+int countl = 0;
+int countc = 0;
+int countw=0;
+%}
+ 
+%%
+\n ++countl;
+[^ \t\n ] ++countc;
+. ++countw;
+end return 0;
+%%
+ 
+/*** User code section***/
+int yywrap() { }
+int main(int argc, char **argv)
+{ 
+printf("Enter the input terminated by end:"); 
+yylex();
+printf("Number of lines = %d\nNumber of words = %d\nNumber of chars = %d\n", countl, 
+countw+countl, countc );
+return 0;
+}
+
+output: flex count.l
+gcc lex.yy.c -o count
+./count
