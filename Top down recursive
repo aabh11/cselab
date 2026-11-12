@@ -1,0 +1,91 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LENGTH 100
+
+char input[MAX_LENGTH];
+int position = 0;
+int error = 0;
+
+void E(void);
+void Eprime(void);
+void T(void);
+void Tprime(void);
+void F(void);
+
+int main(void)
+{
+    printf("Enter an arithmetic expression: ");
+
+    if (fgets(input, sizeof(input), stdin) == NULL)
+        return 1;
+
+    input[strcspn(input, "\n")] = '\0';
+
+    E();
+
+    if (input[position] == '\0' && error == 0)
+        printf("Accepted.\n");
+    else
+        printf("Rejected.\n");
+
+    return 0;
+}
+
+void E(void)
+{
+    T();
+    Eprime();
+}
+
+void Eprime(void)
+{
+    if (input[position] == '+')
+    {
+        position++;
+        T();
+        Eprime();
+    }
+}
+
+void T(void)
+{
+    F();
+    Tprime();
+}
+
+void Tprime(void)
+{
+    if (input[position] == '*')
+    {
+        position++;
+        F();
+        Tprime();
+    }
+}
+
+void F(void)
+{
+    if (isalpha((unsigned char)input[position]))
+    {
+        position++;
+    }
+    else if (input[position] == '(')
+    {
+        position++;
+        E();
+
+        if (input[position] == ')')
+            position++;
+        else
+            error = 1;
+    }
+    else
+    {
+        error = 1;
+    }
+}
+
+output:gcc topdown.c -o topdown
+./topdown
