@@ -1,0 +1,112 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int isKeyword(char buffer[])
+{
+    char keywords[32][10] = {
+        "auto", "break", "case", "char", "const",
+        "continue", "default", "do", "double", "else",
+        "enum", "extern", "float", "for", "goto",
+        "if", "int", "long", "register", "return",
+        "short", "signed", "sizeof", "static", "struct",
+        "switch", "typedef", "union", "unsigned",
+        "void", "volatile", "while"
+    };
+
+    for (int i = 0; i < 32; i++)
+    {
+        if (strcmp(keywords[i], buffer) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
+int main()
+{
+    char ch, buffer[100];
+    int i = 0;
+
+    char operators[] = "+-*/%=<>!";
+    char specialch[] = ",;(){}[]";
+
+    FILE *fp = fopen("program.txt", "r");
+
+    if (fp == NULL)
+    {
+        printf("Error while opening the file\n");
+        return 1;
+    }
+
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        if (isalpha(ch) || ch == '_')
+        {
+            buffer[i++] = ch;
+        }
+        else
+        {
+            if (i > 0)
+            {
+                buffer[i] = '\0';
+
+                if (isKeyword(buffer))
+                    printf("%s is keyword\n", buffer);
+                else
+                    printf("%s is identifier\n", buffer);
+
+                i = 0;
+            }
+
+            if (isdigit(ch))
+                printf("%c is constant\n", ch);
+
+            for (int j = 0; operators[j] != '\0'; j++)
+            {
+                if (ch == operators[j])
+                {
+                    printf("%c is operator\n", ch);
+                    break;
+                }
+            }
+
+            for (int j = 0; specialch[j] != '\0'; j++)
+            {
+                if (ch == specialch[j])
+                {
+                    printf("%c is special character\n", ch);
+                    break;
+                }
+            }
+        }
+    }
+
+    if (i > 0)
+    {
+        buffer[i] = '\0';
+
+        if (isKeyword(buffer))
+            printf("%s is keyword\n", buffer);
+        else
+            printf("%s is identifier\n", buffer);
+    }
+
+    fclose(fp);
+
+    return 0;
+}
+
+
+
+prgrm.txt
+
+void main()
+{
+    int sum,a=5,b=9;
+    sum=a+b;
+}
+
+For output: gcc lex.c
