@@ -1,0 +1,63 @@
+
+%{
+#include <stdio.h>
+#include <string.h>
+
+int integer=0,fp=0,kd=0,id=0,ar_op=0,rop=0,p=0,aop=0,ss=0;
+int i=0,j=0,k=0,l,m,n;
+
+char d[10][10],ide[10][10],ke[20][20];
+%}
+
+%%
+[0-9]+ {integer++;strcpy(d[i],yytext);i++;}
+[0-9]*"."[0-9]+ {fp++;}
+("#include<stdio.h") {printf(" header file");}
+("if"|"else"|"int"|"main"|"float"|"for"|"while") {kd++;strcpy(ke[j],yytext);j++;}
+[_a-z]+[0-9a-z]* {id++;strcpy(ide[k],yytext);k++;}
+["+"|"-"|"*"|"?"] {ar_op++;}
+[=] {aop++;}
+[!@#$%^&*_:;'"?] {ss++;}
+("<"|">"|">="|"<="|"==") {rop++;}
+[{}()] {p++;}
+%%
+
+int main()
+{
+    yyin=fopen("f1.txt","r");
+    yylex();
+    yyout=fopen("f2.txt","w");
+
+    fprintf(yyout,"Integers are \n");
+    for(l=0;l<integer;l++)
+        fprintf(yyout,"%s\n",d[l]);
+
+    fprintf(yyout,"Keywords are \n");
+    for(m=0;m<kd;m++)
+        fprintf(yyout,"%s\n",ke[m]);
+
+    fprintf(yyout,"Identifiers are \n");
+    for(n=0;n<id;n++)
+        fprintf(yyout,"%s\n",ide[n]);
+
+    fprintf(yyout,"Integer =%d\n float=%d\n arithoperator=%d keyword=%d identifier=%d relational operator=%d paranthsis=%d assignment operator=%d special symbol=%d",
+    integer,fp,ar_op,kd,id,rop,p,aop,ss);
+
+    return 0;
+}
+
+int yywrap()
+{
+    return 1;
+}
+
+f1.txt
+
+int a=5;
+float b=12.5;
+if(a>=5)
+    a=a+2;
+
+output:flex lex.l
+gcc lex.yy.c -o lex
+./lex
